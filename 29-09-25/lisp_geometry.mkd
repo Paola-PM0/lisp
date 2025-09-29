@@ -1,0 +1,236 @@
+# Funciones de Área y Volumen en Lisp
+
+## FUNCIONES PARA CALCULAR ÁREAS
+
+### 1. Área de un Círculo
+```lisp
+(defun area-circulo (radio)
+  (let ((resultado (* pi radio radio)))
+    (princ "Área del círculo: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 2. Área de un Triángulo
+```lisp
+(defun area-triangulo (base altura)
+  (let ((resultado (/ (* base altura) 2)))
+    (princ "Área del triángulo: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 3. Área de un Trapecio
+```lisp
+(defun area-trapecio (base-mayor base-menor altura)
+  (let ((resultado (/ (* (+ base-mayor base-menor) altura) 2)))
+    (princ "Área del trapecio: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 4. Área de un Rombo
+```lisp
+(defun area-rombo (diagonal-mayor diagonal-menor)
+  (let ((resultado (/ (* diagonal-mayor diagonal-menor) 2)))
+    (princ "Área del rombo: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 5. Área de un Pentágono Regular
+```lisp
+(defun area-pentagono (lado apotema)
+  (let ((resultado (/ (* 5 lado apotema) 2)))
+    (princ "Área del pentágono: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 6. Área de un Hexágono Regular
+```lisp
+(defun area-hexagono (lado)
+  (let ((resultado (* (/ (* 3 (sqrt 3)) 2) lado lado)))
+    (princ "Área del hexágono: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 7. Área de una Elipse
+```lisp
+(defun area-elipse (semieje-mayor semieje-menor)
+  (let ((resultado (* pi semieje-mayor semieje-menor)))
+    (princ "Área de la elipse: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 8. Área de un Sector Circular
+```lisp
+(defun area-sector-circular (radio angulo-grados)
+  (let ((resultado (* pi radio radio (/ angulo-grados 360))))
+    (princ "Área del sector circular: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 9. Área de un Paralelogramo
+```lisp
+(defun area-paralelogramo (base altura)
+  (let ((resultado (* base altura)))
+    (princ "Área del paralelogramo: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 10. Área de un Octágono Regular
+```lisp
+(defun area-octagono (lado)
+  (let ((resultado (* 2 (+ 1 (sqrt 2)) lado lado)))
+    (princ "Área del octágono: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+---
+
+## FUNCIONES PARA CALCULAR VOLÚMENES
+
+### 1. Volumen de una Esfera
+```lisp
+(defun volumen-esfera (radio)
+  (let ((resultado (* (/ 4 3) pi radio radio radio)))
+    (princ "Volumen de la esfera: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 2. Volumen de un Cubo
+```lisp
+(defun volumen-cubo (lado)
+  (let ((resultado (* lado lado lado)))
+    (princ "Volumen del cubo: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 3. Volumen de un Cilindro
+```lisp
+(defun volumen-cilindro (radio altura)
+  (let ((resultado (* pi radio radio altura)))
+    (princ "Volumen del cilindro: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 4. Volumen de un Cono
+```lisp
+(defun volumen-cono (radio altura)
+  (let ((resultado (* (/ 1 3) pi radio radio altura)))
+    (princ "Volumen del cono: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 5. Volumen de una Pirámide
+```lisp
+(defun volumen-piramide (area-base altura)
+  (let ((resultado (/ (* area-base altura) 3)))
+    (princ "Volumen de la pirámide: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 6. Volumen de un Prisma Rectangular
+```lisp
+(defun volumen-prisma-rectangular (largo ancho altura)
+  (let ((resultado (* largo ancho altura)))
+    (princ "Volumen del prisma rectangular: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 7. Volumen de un Tetraedro Regular
+```lisp
+(defun volumen-tetraedro (arista)
+  (let ((resultado (/ (* arista arista arista) (* 6 (sqrt 2)))))
+    (princ "Volumen del tetraedro: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 8. Volumen de un Elipsoide
+```lisp
+(defun volumen-elipsoide (a b c)
+  (let ((resultado (* (/ 4 3) pi a b c)))
+    (princ "Volumen del elipsoide: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 9. Volumen de un Toro
+```lisp
+(defun volumen-toro (radio-mayor radio-menor)
+  (let ((resultado (* 2 pi pi radio-mayor radio-menor radio-menor)))
+    (princ "Volumen del toro: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+### 10. Volumen de una Pirámide Truncada
+```lisp
+(defun volumen-piramide-truncada (area-base-mayor area-base-menor altura)
+  (let ((resultado (* (/ altura 3) 
+                      (+ area-base-mayor 
+                         area-base-menor 
+                         (sqrt (* area-base-mayor area-base-menor))))))
+    (princ "Volumen de la pirámide truncada: ")
+    (princ resultado)
+    (terpri)
+    resultado))
+```
+
+---
+
+## EJEMPLOS DE USO
+
+```lisp
+;; Ejemplos de áreas:
+(area-circulo 5)              
+;; Salida: "Área del círculo: 78.53981633974483"
+
+(area-triangulo 6 4)          
+;; Salida: "Área del triángulo: 12"
+
+(area-trapecio 8 5 4)         
+;; Salida: "Área del trapecio: 26"
+
+;; Ejemplos de volúmenes:
+(volumen-esfera 3)            
+;; Salida: "Volumen de la esfera: 113.09733552923255"
+
+(volumen-cubo 5)              
+;; Salida: "Volumen del cubo: 125"
+
+(volumen-cilindro 2 10)       
+;; Salida: "Volumen del cilindro: 125.66370614359172"
+```
