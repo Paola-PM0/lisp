@@ -1,0 +1,130 @@
+;;; DOMINIO DEL DISCURSO
+;;; Objetos: tierra, luna, sol, planetas, satélites, perros, carteros
+
+;;; CONSTANTES DE INDIVIDUO
+;;; tierra - La Tierra
+;;; luna - La Luna
+;;; sol - El Sol
+
+;;; PREDICADOS (PROPIEDADES)
+;;; (Planeta x) - x es un planeta
+;;; (Satelite x) - x es un satélite
+;;; (Perro x) - x es un perro
+;;; (Cartero x) - x es un cartero
+
+;;; PREDICADOS (RELACIONES)
+;;; (Gira-alrededor x y) - x gira alrededor de y
+;;; (Muerde x y) - x muerde a y
+;;; (Asusta x y) - x asusta a y
+
+;;; ============================================
+;;; TRADUCCIÓN DE LOS ENUNCIADOS
+;;; ============================================
+
+;; 1. La Tierra es un planeta.
+(Planeta tierra)
+
+;; 2. La Luna no es un planeta.
+(not (Planeta luna))
+
+;; 3. La Luna es un satélite.
+(Satelite luna)
+
+;; 4. La Tierra gira alrededor del Sol.
+(Gira-alrededor tierra sol)
+
+;; 5. Todo planeta es un satélite.
+;; ∀x (Planeta(x) → Satélite(x))
+(forall (x)
+  (implies (Planeta x)
+           (Satelite x)))
+
+;; 6. Todo planeta gira alrededor del Sol.
+;; ∀x (Planeta(x) → Gira-alrededor(x, sol))
+(forall (x)
+  (implies (Planeta x)
+           (Gira-alrededor x sol)))
+
+;; 7. Algún planeta gira alrededor de la Luna.
+;; ∃x (Planeta(x) ∧ Gira-alrededor(x, luna))
+(exists (x)
+  (and (Planeta x)
+       (Gira-alrededor x luna)))
+
+;; 8. Hay por lo menos un satélite.
+;; ∃x (Satélite(x))
+(exists (x)
+  (Satelite x))
+
+;; 9. Todos los perros del vecindario muerden a algún cartero.
+;; ∀x (Perro(x) → ∃y (Cartero(y) ∧ Muerde(x, y)))
+(forall (x)
+  (implies (Perro x)
+           (exists (y)
+             (and (Cartero y)
+                  (Muerde x y)))))
+
+;; 10. Hay un cartero al que lo muerden todos los perros.
+;; ∃y (Cartero(y) ∧ ∀x (Perro(x) → Muerde(x, y)))
+(exists (y)
+  (and (Cartero y)
+       (forall (x)
+         (implies (Perro x)
+                  (Muerde x y)))))
+
+;; 11. Todos los carteros son mordidos por algún perro.
+;; ∀y (Cartero(y) → ∃x (Perro(x) ∧ Muerde(x, y)))
+(forall (y)
+  (implies (Cartero y)
+           (exists (x)
+             (and (Perro x)
+                  (Muerde x y)))))
+
+;; 12. Hay un perro que muerde a todos los carteros.
+;; ∃x (Perro(x) ∧ ∀y (Cartero(y) → Muerde(x, y)))
+(exists (x)
+  (and (Perro x)
+       (forall (y)
+         (implies (Cartero y)
+                  (Muerde x y)))))
+
+;; 13. Todos los perros que asustan a algún cartero, lo muerden.
+;; ∀x ∀y ((Perro(x) ∧ Cartero(y) ∧ Asusta(x, y)) → Muerde(x, y))
+(forall (x)
+  (forall (y)
+    (implies (and (Perro x)
+                  (Cartero y)
+                  (Asusta x y))
+             (Muerde x y))))
+
+;; 14. Hay un perro que muerde a todos los perros que muerden a algún cartero.
+;; ∃x (Perro(x) ∧ ∀z ((Perro(z) ∧ ∃y (Cartero(y) ∧ Muerde(z, y))) → Muerde(x, z)))
+(exists (x)
+  (and (Perro x)
+       (forall (z)
+         (implies (and (Perro z)
+                       (exists (y)
+                         (and (Cartero y)
+                              (Muerde z y))))
+                  (Muerde x z)))))
+
+;; 15. Hay un solo perro que se muerde a sí mismo.
+;; ∃x (Perro(x) ∧ Muerde(x, x) ∧ ∀y ((Perro(y) ∧ Muerde(y, y)) → (= y x)))
+(exists (x)
+  (and (Perro x)
+       (Muerde x x)
+       (forall (y)
+         (implies (and (Perro y)
+                       (Muerde y y))
+                  (= y x)))))
+
+;;; ============================================
+;;; RESUMEN DE ELEMENTOS
+;;; ============================================
+
+;;; VARIABLES DE INDIVIDUO: x, y, z
+;;; CONSTANTES DE INDIVIDUO: tierra, luna, sol
+;;; CUANTIFICADORES: forall (∀), exists (∃)
+;;; PROPIEDADES: Planeta, Satelite, Perro, Cartero
+;;; RELACIONES: Gira-alrededor, Muerde, Asusta
+;;; DOMINIO: {planetas, satélites, perros, carteros, objetos celestes}
