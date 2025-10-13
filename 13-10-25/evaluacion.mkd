@@ -1,0 +1,226 @@
+/***********************
+ * Dominio / Vocabulario
+ ***********************/
+% biblioteca(B), libro(L), autor(A), usuario(U), seccion(S)
+biblioteca(b_nacional).
+biblioteca(b_central).
+biblioteca(b_municipal).
+
+seccion(clasicos).
+seccion(infantil).
+seccion(ciencias).
+
+/***********************
+ * Hechos de ejemplo
+ ***********************/
+% Libros
+libro(don_quijote).
+libro(quijote_1605).          
+libro(infantil_1).
+libro(infantil_2).
+libro(ciencia_1).
+libro(ciencia_2_ref).         
+libro(viejo_danado).          
+libro(olvidado).             
+% Autor prolífico (7)
+libro(p7_1). libro(p7_2). libro(p7_3). libro(p7_4). libro(p7_5). libro(p7_6).
+
+% Autores
+autor(cervantes).
+autor(autora_infantil).
+autor(autor_ciencias).
+autor(autor_prolifico).
+
+% Relación autor-libro
+autor_de(cervantes, don_quijote).
+autor_de(cervantes, quijote_1605).
+
+autor_de(autora_infantil, infantil_1).
+autor_de(autora_infantil, infantil_2).
+
+autor_de(autor_ciencias, ciencia_1).
+autor_de(autor_ciencias, ciencia_2_ref).
+
+autor_de(autor_prolifico, p7_1).
+autor_de(autor_prolifico, p7_2).
+autor_de(autor_prolifico, p7_3).
+autor_de(autor_prolifico, p7_4).
+autor_de(autor_prolifico, p7_5).
+autor_de(autor_prolifico, p7_6).
+
+% Asignación de secciones (15, 18)
+seccion_de(don_quijote, clasicos).
+seccion_de(quijote_1605, clasicos).
+seccion_de(infantil_1, infantil).
+seccion_de(infantil_2, infantil).
+seccion_de(ciencia_1, ciencias).
+seccion_de(ciencia_2_ref, ciencias).
+seccion_de(viejo_danado, clasicos).
+seccion_de(olvidado, clasicos).
+
+% “Ciencias” como temática
+es_ciencia(ciencia_1).
+es_ciencia(ciencia_2_ref).
+
+% Páginas (19)
+paginas(don_quijote, 863).
+paginas(infantil_1, 80).    
+paginas(infantil_2, 120).
+paginas(ciencia_1, 350).
+
+% Existencias en bibliotecas (1, 3, 5, 11, 16)
+tiene(b_nacional, don_quijote).         % (1)
+tiene(b_nacional, quijote_1605).
+tiene(b_central, don_quijote).          % para “más de una biblioteca” (3)
+tiene(b_central, ciencia_1).
+tiene(b_municipal, ciencia_1).          % (3)
+tiene(b_central, ciencia_2_ref).        % solo consulta
+tiene(b_central, infantil_1).
+tiene(b_central, infantil_2).
+tiene(b_central, viejo_danado).
+tiene(b_central, olvidado).
+
+% Copias / ejemplares (16)
+% (modelo simple de “más de un ejemplar”)
+copias(b_central, infantil_1, 2).
+
+% Tamaño de biblioteca (5)
+cantidad_libros(b_central, 12000).
+
+% Estado, rareza y política de consulta (4, 9, 11)
+raro(quijote_1605).
+buen_estado(don_quijote).
+buen_estado(infantil_1).
+buen_estado(infantil_2).
+buen_estado(ciencia_1).
+% ciencia_2_ref sin buen_estado explícito (no necesario para consulta)
+consulta_solo(ciencia_2_ref).
+% libro en mal estado
+% viejo_danado: no está en buen estado (8)
+
+% Usuarios (10, 14, 17, 20)
+usuario(ana).    registrado(ana).
+usuario(ben).    registrado(ben).
+usuario(carla).  registrado(carla).  multa(carla).   % (14)
+
+% Préstamos (9, 12, 13, 17, 20)
+% Ana ha tomado todos los de infantil (20)
+prestado(ana, infantil_1).
+prestado(ana, infantil_2).
+
+% Ben con 4 préstamos activos (17)
+prestado(ben, don_quijote).
+prestado(ben, ciencia_1).
+prestado(ben, p7_1).
+prestado(ben, p7_2).
+
+% “olvidado” nunca ha sido prestado (13): no aparece en prestado/2
+
+/***********************
+ * Reglas (formalización)
+ ***********************/
+
+% (1) La Biblioteca Nacional tiene "Don Quijote"... -> hecho arriba.
+
+% (2) Todos los libros en la Biblioteca Nacional están catalogados.
+catalogado(L) :- tiene(b_nacional, L).
+
+% (3) Existen libros en más de una biblioteca.
+en_mas_de_una_biblioteca(L) :-
+  tiene(B1,L), tiene(B2,L), B1 \= B2.
+
+% (4) Si un libro es raro, entonces no se puede prestar.
+no_puede_ser_prestado(L) :- raro(L).
+
+% (5) La Biblioteca Central tiene más de 10,000 libros. -> hecho: cantidad_libros/2
+
+% (6) Todos los autores tienen al menos un libro en una biblioteca.
+% Regla utilitaria para verificar: falla si hay un autor sin libro ubicado.
+todos_autores_en_alguna_biblioteca :-
+  \+ ( autor(A),
+       \+ ( autor_de(A,L), tiene(_,L) )
+     ).
+
+% (7) Existe un autor con más de 5 libros publicados.
+autor_con_mas_de_5_libros(A) :-
+  autor(A),
+  findall(L, autor_de(A,L), Ls),
+  length(Ls, N),
+  N > 5.
+
+% (8) No todos los libros de la biblioteca están en buen estado.
+existe_libro_en_mal_estado :-
+  libro(L), \+ buen_estado(L).
+
+% (9) Si un libro está en buen estado, puede ser prestado (salvo excepciones).
+puede_ser_prestado(L) :-
+  buen_estado(L),
+  \+ raro(L),
+  \+ consulta_solo(L).
+
+% (10) Todos los usuarios registrados pueden tomar prestado un libro.
+% Matizamos con (14) y (17): sin multa y con ≤ 3 préstamos activos.
+prestamos_activos(U, N) :-
+  findall(L, prestado(U,L), Ls),
+  length(Ls, N).
+
+puede_pedir(U, L) :-
+  usuario(U),
+  registrado(U),
+  \+ multa(U),              % (14)
+  prestamos_activos(U,N),
+  N =< 3,                   % (17)
+  puede_ser_prestado(L).
+
+% (11) Existen libros solo de consulta (no se prestan).
+no_puede_ser_prestado(L) :- consulta_solo(L).
+
+% (12) Todo libro prestado debe ser devuelto en 15 días.
+plazo_devolucion_dias(15).
+debe_devolver_en(U, L, 15) :- prestado(U,L).
+
+% (13) Hay un libro que nadie ha pedido en préstamo.
+libro_nunca_prestado(L) :-
+  libro(L),
+  \+ prestado(_,L).
+
+% (14) Si un usuario tiene multa, no puede pedir un libro prestado.
+no_puede_pedir(U) :- multa(U).
+
+% (15) Todos los libros de un mismo autor están en la misma sección.
+% Forma verificable: true si NO hay contraejemplos.
+autor_libros_en_misma_seccion(A) :-
+  autor(A),
+  \+ ( autor_de(A,L1),
+       autor_de(A,L2),
+       seccion_de(L1,S1),
+       seccion_de(L2,S2),
+       S1 \= S2 ).
+
+% (16) Existe un libro con más de un ejemplar en la biblioteca.
+libro_con_multiples_ejemplares(B,L) :-
+  copias(B,L,N),
+  N > 1.
+
+% (17) Usuario con >3 préstamos debe devolver uno para pedir otro.
+debe_devolver_para_pedir(U) :-
+  prestamos_activos(U,N),
+  N > 3.
+
+% (18) Hay una sección donde todos los libros son de ciencias.
+% Lo expresamos para 'ciencias'.
+seccion_de_solo_ciencias(ciencias) :-
+  \+ ( seccion_de(L, ciencias),
+       \+ es_ciencia(L) ).
+
+% (19) No todos los libros tienen más de 100 páginas.
+existe_libro_con_100_paginas_o_menos :-
+  libro(L),
+  paginas(L, P),
+  P =< 100.
+
+% (20) Existe un usuario que ha tomado prestados todos los libros de la sección infantil.
+usuario_con_todos_infantil(U) :-
+  usuario(U),
+  forall( (libro(L), seccion_de(L, infantil)), prestado(U,L) ).
+
